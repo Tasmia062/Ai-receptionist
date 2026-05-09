@@ -6,32 +6,32 @@
                    ↓
             Twilio (via GHL)
                    ↓
-Retell AI – Conversation Flow Agent (Ava)
+    Retell AI – Conversation Flow Agent (Ava)
                    ↓
-┌─────────────────────────────────────┐
-│         Intent Routing              │
-├─────────────────────────────────────┤
-│ Named Agent Request                 │
-│   → Cold Transfer (SIP REFER)       │
-│   → GHL Agent Number                │
-│                                     │
-│ General Human Request               │
-│   → Cold Transfer (SIP REFER)       │
-│   → GHL Agent Number                │
-│                                     │
-│ Appointment / Callback              │
-│   → GHL Webhook / Zapier            │
-│                                     │
-│ Insurance Education                 │
-│   → Handled in-call by Ava          │
-│                                     │
-│ After Hours                         │
-│   → Voicemail Transfer              │
-│   → Appointment Offer               │
-│                                     │
-│ DNC Request                         │
-│   → Confirmation + End Call         │
-└─────────────────────────────────────┘
+    ┌─────────────────────────────────────┐
+    │         Intent Routing              │
+    ├─────────────────────────────────────┤
+    │ Named Agent Request                 │
+    │   → Cold Transfer (SIP REFER)       │
+    │   → GHL Agent Number                │
+    │                                     │
+    │ General Human Request               │
+    │   → Cold Transfer (SIP REFER)       │
+    │   → GHL Agent Number                │
+    │                                     │
+    │ Appointment / Callback              │
+    │   → GHL Webhook / Zapier            │
+    │                                     │
+    │ Insurance Education                 │
+    │   → Handled in-call by Ava          │
+    │                                     │
+    │ After Hours                         │
+    │   → Voicemail Transfer              │
+    │   → Appointment Offer               │
+    │                                     │
+    │ DNC Request                         │
+    │   → Confirmation + End Call         │
+    └─────────────────────────────────────┘
                    ↓
               Call Ends
                    ↓
@@ -39,15 +39,15 @@ Retell AI – Conversation Flow Agent (Ava)
                    ↓
               n8n Workflow
                    ↓
-┌─────────────────────────────────────┐
-│       Parse + Validate Payload      │
-│       Qualify Lead                  │
-│       GHL Contact Upsert            │
-│       Duplicate Opportunity Check   │
-│       Pipeline Entry (Qualified)    │
-│       Call Note + Recording URL     │
-│       Contact Log (Disqualified)    │
-└─────────────────────────────────────┘
+    ┌─────────────────────────────────────┐
+    │       Parse + Validate Payload      │
+    │       Qualify Lead                  │
+    │       GHL Contact Upsert            │
+    │       Duplicate Opportunity Check   │
+    │       Pipeline Entry (Qualified)    │
+    │       Call Note + Recording URL     │
+    │       Contact Log (Disqualified)    │
+    └─────────────────────────────────────┘
 
 ## Components
 
