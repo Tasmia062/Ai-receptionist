@@ -1,0 +1,242 @@
+{
+  "agent_id": "YOUR_TRANSFER_AGENT_ID",
+  "channel": "voice",
+  "last_modification_timestamp": 1775374644638,
+  "agent_name": "Transfer Agent (Conversation Flow)",
+  "version_description": "2nd time's the charm?",
+  "response_engine": {
+    "type": "conversation-flow",
+    "version": 2,
+    "conversation_flow_id": "YOUR_CONVERSATION_FLOW_ID"
+  },
+  "language": "en-US",
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": false,
+  "version": 2,
+  "is_published": false,
+  "version_title": "Ava Transfer Agent Correct",
+  "post_call_analysis_model": "gpt-4.1-mini",
+  "pii_config": {
+    "mode": "post_call",
+    "categories": []
+  },
+  "handbook_config": {
+    "natural_filler_words": true
+  },
+  "voice_id": "retell-Cimo",
+  "max_call_duration_ms": 3600000,
+  "interruption_sensitivity": 0.9,
+  "normalize_for_speech": false,
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "is_transfer_agent": true,
+  "conversationFlow": {
+    "conversation_flow_id": "YOUR_CONVERSATION_FLOW_ID",
+    "version": 2,
+    "nodes": [
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Hey {{transfer_target_label}} — I have {{caller_first_name}} on the line for you.\n\nHere's the summary:\n- Name: {{caller_first_name}} {{caller_last_name}}\n- State: {{caller_state}}\n- Interested in: {{department_bucket}}\n- Budget range: {{budget_range}}\n\nYou have three options — just say which one:\n1. \"Take the call\" — I'll bridge them through right now\n2. \"Set an appointment\" — I'll schedule them and send you the details\n3. \"Call back in 5\" — I'll let them know you'll call them back shortly\n\nWhat would you like to do?"
+        },
+        "name": "Welcome Node",
+        "edges": [
+          {
+            "destination_node_id": "bridge-transfer-node-1",
+            "id": "edge-1",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Agent says yes, take the call, go ahead, send them through, transfer, or any affirmative to take the call now"
+            }
+          },
+          {
+            "destination_node_id": "node-1775370246465",
+            "id": "edge-1773950140158-u0ir93qas",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Agent says no, busy, set an appointment, schedule them, get an appointment, not available, or any indication they cannot take the call right now"
+            }
+          },
+          {
+            "destination_node_id": "node-callback-new",
+            "id": "edge-callback-option-new",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Agent says call back, I'll call them back, give me 5 minutes, callback, or any indication they want to call the prospect back themselves shortly"
+            }
+          }
+        ],
+        "start_speaker": "agent",
+        "id": "start-node-1773949811637",
+        "type": "conversation",
+        "display_position": {
+          "x": 342,
+          "y": 702
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Bridging the transfer call"
+        },
+        "name": "Bridge Transfer",
+        "start_speaker": "agent",
+        "id": "bridge-transfer-node-1",
+        "type": "bridge_transfer",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 726,
+          "y": 702
+        }
+      },
+      {
+        "name": "Appointment Offer",
+        "edges": [
+          {
+            "destination_node_id": "node-1775376706180",
+            "id": "edge-1775373426439-ijjb5gusi",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants an appointment or to be scheduled"
+            }
+          },
+          {
+            "destination_node_id": "node-1775376706180",
+            "id": "edge-1775373428350-hnu0e3nh6",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants a callback"
+            }
+          },
+          {
+            "destination_node_id": "start-node-1773949811637",
+            "id": "edge-1775373430934-82mfgx73i",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants to try the transfer again"
+            }
+          },
+          {
+            "destination_node_id": "node-1775376922900",
+            "id": "edge-1775373432631-570ckcxtq",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller just wants to leave a message or hang up"
+            }
+          }
+        ],
+        "id": "node-1775370246465",
+        "type": "conversation",
+        "display_position": {
+          "x": 750,
+          "y": 774
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "You are returning to the caller after the agent was unavailable or chose not to take the call right now.\n\nSay exactly:\n\"Hey [caller name], looks like [agent] is tied up at the moment.\"\n\nThen say:\n\"I have two options for you — I can get you scheduled for an appointment at a specific time, or I can have an agent call you back in the next few minutes. Which works better for you?\"\n\nWait for the caller to respond."
+        }
+      },
+      {
+        "name": "Closing Message",
+        "edges": [
+          {
+            "destination_node_id": "node-1775376871196",
+            "id": "edge-1775376882516-5bbjkanir",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1775376706180",
+        "type": "conversation",
+        "display_position": {
+          "x": 1110,
+          "y": 750
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Say exactly:\n\"Perfect. Someone from our team will be in touch with you shortly.\"\nThen say:\n\"Thank you for calling CLIENT_NAME. Have a great day.\"\nThen end the call."
+        }
+      },
+      {
+        "name": "Cancel Transfer",
+        "id": "node-1775376871196",
+        "type": "cancel_transfer",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 1542,
+          "y": 1158
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Canceling the transfer call"
+        }
+      },
+      {
+        "name": "Closing - Hangup",
+        "edges": [
+          {
+            "destination_node_id": "node-1775376871196",
+            "id": "edge-1775376922900-uj8ic7dr5",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Describe the transition condition"
+            }
+          }
+        ],
+        "id": "node-1775376922900",
+        "type": "conversation",
+        "display_position": {
+          "x": 1134,
+          "y": 1110
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Say exactly:\n\"Thank you for calling CLIENT_NAME. Have a great day.\"\nThen end the call using Cancel Transfer."
+        }
+      },
+      {
+        "name": "Agent Callback Offer",
+        "edges": [
+          {
+            "destination_node_id": "node-1775376871196",
+            "id": "edge-callback-to-cancel",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller is done or says goodbye or thanks"
+            }
+          }
+        ],
+        "id": "node-callback-new",
+        "type": "conversation",
+        "display_position": {
+          "x": 678,
+          "y": 126
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "The agent has indicated they will call the prospect back in a few minutes.\n\nReturn to the caller and say exactly:\n\"Great news — [agent name] is going to give you a call back personally in just a few minutes. Make sure your phone is nearby.\"\n\nThen say:\n\"Is there anything else I can help you with before we wrap up?\"\n\nIf they say no or are done:\n\"Perfect. You'll be hearing from us very shortly. Thank you for calling CLIENT_NAME — have a great day!\"\n\nThen end the call."
+        }
+      }
+    ],
+    "start_node_id": "start-node-1773949811637",
+    "start_speaker": "agent",
+    "model_choice": {
+      "type": "cascading",
+      "model": "gpt-4.1"
+    },
+    "tool_call_strict_mode": true,
+    "knowledge_base_ids": [],
+    "kb_config": {
+      "top_k": 3,
+      "filter_score": 0.6
+    },
+    "begin_tag_display_position": {
+      "x": 198,
+      "y": 702
+    },
+    "is_published": false,
+    "is_transfer_cf": true
+  }
+}
