@@ -22,6 +22,10 @@ books appointments, and logs every call into GHL automatically.
 - Full call notes with recording URL attached to every contact
 
 ## Architecture
+
+<img width="1510" height="528" alt="image" src="https://github.com/user-attachments/assets/ba68ffb5-f3e9-44db-a4e5-87cc645cc43a" />
+
+
 See [docs/architecture.md](docs/architecture.md)
 
 ## Call Flow
