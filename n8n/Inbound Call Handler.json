@@ -1,0 +1,549 @@
+{
+  "name": "Phase 1 – Ava Inbound Call Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "retell-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "bc212f6f-1461-4f63-bab9-5bfc13a90153",
+      "name": "Retell Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        144
+      ],
+      "webhookId": "YOUR_N8N_WEBHOOK_ID",
+      "notes": "Retell posts call data here when a call ends. Set this webhook URL inside Retell > Agent > Post Call Webhook."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ received: true }) }}",
+        "options": {}
+      },
+      "id": "2e1d13a5-0417-4ccc-8560-97d6c6b6b414",
+      "name": "Respond 200 OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -112
+      ],
+      "notes": "Immediately acknowledge receipt to Retell so it does not retry."
+    },
+    {
+      "parameters": {
+        "jsCode": "// ── Parse & Validate Retell Payload ──────────────────────────────────────\nconst body = $input.first().json.body || $input.first().json;\nconst call = body.call || body;\n\n// Core call metadata\nconst callId        = call.call_id         || '';\nconst callStatus    = call.call_status     || 'unknown';\nconst recordingUrl  = call.recording_url   || '';\nconst callDuration  = call.duration_ms     || call.call_duration || 0;\nconst callStartTime = call.start_timestamp || '';\nconst callEndTime   = call.end_timestamp   || '';\nconst fromNumber    = call.from_number     || call.to_number || '';\n\n// Post Call Analysis data (if available)\nconst vars         = call.call_analysis?.custom_analysis_data || call.custom_data || {};\nconst postCallData = call.call_analysis || {};\n\nconst intentBucket    = postCallData.intent_bucket    || '';\nconst productBucket   = postCallData.product_bucket   || '';\nconst transferOutcome = postCallData.transfer_outcome || '';\nconst callSummary     = postCallData.call_summary     || '';\nconst crmHandoffNote  = postCallData.crm_handoff_note || '';\nconst userSentiment   = postCallData.user_sentiment   || '';\n\n// ✅ Tool call arguments থেকে data নিন (trigger_callback_workflow)\nconst toolCallArgs = (() => {\n  try {\n    const tc = call.tool_calls?.find(t => t.name === 'trigger_callback_workflow');\n    return tc ? JSON.parse(tc.arguments || '{}') : {};\n  } catch { return {}; }\n})();\n\n// ✅ transcript_with_tool_calls থেকেও চেক করুন\nconst toolCallArgsFromTranscript = (() => {\n  try {\n    const tc = call.transcript_with_tool_calls?.find(\n      t => t.role === 'tool_call_invocation' && t.name === 'trigger_callback_workflow'\n    );\n    return tc ? JSON.parse(tc.arguments || '{}') : {};\n  } catch { return {}; }\n})();\n\n// Merge করুন — transcript > tool_calls > call_analysis\nconst merged = { ...toolCallArgs, ...toolCallArgsFromTranscript };\n\n// Caller fields — both naming conventions supported\nconst callerName      = (vars.caller_first_name       || vars.caller_name         || merged.first_name        || '').trim();\nconst callerPhone     = (vars.caller_phone_collected  || vars.caller_phone        || fromNumber               || '').trim();\nconst callerState     = (vars.caller_state            || merged.caller_state      || '').trim();\nconst productInterest = (vars.caller_product_interest || vars.product_interest    || merged.reason            || '').trim();\nconst urgency         = (vars.caller_urgency          || vars.urgency             || merged.urgency           || '').trim();\nconst callOutcome     = (vars.call_outcome            || merged.call_outcome      || 'unknown').trim().toLowerCase();\nconst appointmentSet  = vars.appointment_set === true || vars.appointment_set === 'true';\nconst afterHours      = vars.after_hours     === true || vars.after_hours     === 'true';\nconst callerMessage   = (merged.reason || vars.caller_message || '').trim();\n\n// ── Phone format (E.164) ──────────────────────────────────────────────────\nconst digits = callerPhone.replace(/\\D/g, '');\nconst callerPhoneFormatted = callerPhone.startsWith('+')\n  ? callerPhone\n  : digits.length === 10\n    ? '+1' + digits\n    : digits.length === 11 && digits.startsWith('1')\n      ? '+' + digits\n      : callerPhone;\n\n// ── Validation ────────────────────────────────────────────────────────────\nconst missingFields = [];\nif (!callerPhoneFormatted || callerPhoneFormatted === '+1') missingFields.push('phone');\nif (!callerName) missingFields.push('name');\n\nconst isValid = missingFields.length === 0;\n\n// ── Qualification logic ───────────────────────────────────────────────────\nconst disqualifiedOutcomes = ['disqualified', 'wrong_number', 'spam', 'hangup'];\nconst isQualified = isValid\n  && productInterest !== ''\n  && !disqualifiedOutcomes.includes(callOutcome);\n\nreturn [{\n  json: {\n    callId, callStatus, recordingUrl, callDuration, callStartTime, callEndTime,\n    callerName, callerPhone: callerPhoneFormatted, callerState,\n    productInterest, urgency, callOutcome, appointmentSet, afterHours, callerMessage,\n    intentBucket, productBucket, transferOutcome, callSummary, crmHandoffNote, userSentiment,\n    isValid, isQualified, missingFields,\n    ghlTag: isQualified ? 'Qualified Lead' : 'Disqualified',\n    leadSource: 'Ava Inbound Call'\n  }\n}];"
+      },
+      "id": "8d92dabe-8ff2-4e09-96b9-a1e6ed3a1e46",
+      "name": "Parse + Validate Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        144
+      ],
+      "notes": "Maps all Retell fields to standard names. Sets isQualified flag used for branching."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.isValid }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "8c646e59-c10d-41a9-9818-cc78536576a1",
+      "name": "Is Payload Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        144
+      ],
+      "notes": "If phone or name is missing, route to error log. Otherwise continue."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log invalid/incomplete payloads for manual review\nconst data = $input.first().json;\nconsole.error('Invalid Retell payload received', JSON.stringify({\n  callId: data.callId,\n  missingFields: data.missingFields,\n  timestamp: new Date().toISOString()\n}));\nreturn [{ json: { error: true, reason: 'Missing required fields', missingFields: data.missingFields } }];\n"
+      },
+      "id": "2d13b310-ad18-4025-9354-b83c298ec0f0",
+      "name": "Log Invalid Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        288
+      ],
+      "notes": "Catches calls where phone or name was not captured. Review these manually."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.isQualified }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "a59a3e27-b181-4b7b-b6e4-5dfaddf4ecc1",
+      "name": "Is Caller Qualified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        128,
+        128
+      ],
+      "notes": "Qualified leads go to full GHL pipeline entry. Disqualified still create a contact but skip pipeline."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/contacts/upsert/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR_GHL_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"firstName\": \"{{ $json.callerName.split(' ')[0] }}\",\n  \"lastName\": \"{{ $json.callerName.split(' ').slice(1).join(' ') }}\",\n  \"phone\": \"{{ $json.callerPhone }}\",\n  \"locationId\": \"YOUR_GHL_LOCATION_ID\",\n  \"customFields\": [\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_1\", \"value\": \"{{ $json.callerState }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_2\", \"value\": \"{{ $json.productInterest }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_3\", \"value\": \"{{ $json.urgency }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_4\", \"value\": \"{{ $json.callOutcome }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_5\", \"value\": \"{{ $json.callId }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_6\", \"value\": \"{{ $json.leadSource }}\" }\n  ],\n  \"tags\": [\"{{ $json.ghlTag }}\", \"Ava Inbound Call\"]\n}",
+        "options": {}
+      },
+      "id": "813270c6-31b6-44ad-94e1-a5c7324ee712",
+      "name": "GHL – Create Contact (Qualified)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        336,
+        -96
+      ],
+      "notes": "Creates or updates GHL contact for qualified leads. Replace GHL API key before going live."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://services.leadconnectorhq.com/contacts/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR_GHL_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"firstName\": \"{{ $json.callerName.split(' ')[0] }}\",\n  \"lastName\": \"{{ $json.callerName.split(' ').slice(1).join(' ') }}\",\n  \"phone\": \"{{ $json.callerPhone }}\",\n  \"locationId\": \"YOUR_GHL_LOCATION_ID\",\n  \"customFields\": [\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_1\", \"value\": \"{{ $json.callerState }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_2\", \"value\": \"{{ $json.productInterest }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_3\", \"value\": \"{{ $json.urgency }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_4\", \"value\": \"{{ $json.callOutcome }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_5\", \"value\": \"{{ $json.callId }}\" },\n    { \"id\": \"YOUR_CUSTOM_FIELD_ID_6\", \"value\": \"{{ $json.leadSource }}\" }\n  ],\n  \"tags\": [\"{{ $json.ghlTag }}\", \"Ava Inbound Call\"]\n}",
+        "options": {}
+      },
+      "id": "218f31c6-d47b-4cdb-8c85-7381f99ecb82",
+      "name": "GHL – Create Contact (Disqualified)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        336,
+        320
+      ],
+      "notes": "Still creates a GHL contact for disqualified leads for audit purposes. Tagged Disqualified."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/opportunities/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR_GHL_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $('GHL – Create Contact (Qualified)').item.json.contact.firstName }} {{ $('GHL – Create Contact (Qualified)').item.json.contact.lastName }} – {{ $('GHL – Create Contact (Qualified)').item.json.contact.customFields[3].fieldValue[0] }}\",\n  \"contactId\": \"{{ $('GHL – Create Contact (Qualified)').item.json.contact.id }}\",\n  \"pipelineId\": \"YOUR_GHL_PIPELINE_ID\",\n  \"locationId\": \"YOUR_GHL_LOCATION_ID\",\n  \"status\": \"open\",\n  \"source\": \"Ava Inbound Call\"\n}",
+        "options": {}
+      },
+      "id": "40a9504a-bfe5-4dd4-b6b2-6e364a865175",
+      "name": "GHL – Add to Pipeline (New Lead)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1104,
+        -272
+      ],
+      "retryOnFail": false,
+      "notes": "Adds qualified contact to GHL pipeline at New Lead stage. Replace PIPELINE_ID and STAGE_ID after Debbie's walkthrough."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('GHL – Create Contact (Qualified)').item.json.contact.id }}/notes/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR_GHL_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"body\": \"📞 Ava Inbound Call – {{ $('Parse + Validate Payload').item.json.callStartTime }}\\n\\nSummary: {{ $('Parse + Validate Payload').item.json.callSummary }}\\nIntent: {{ $('Parse + Validate Payload').item.json.intentBucket }}\\nProduct: {{ $('Parse + Validate Payload').item.json.productBucket }}\\nOutcome: {{ $('Parse + Validate Payload').item.json.transferOutcome }}\\nSentiment: {{ $('Parse + Validate Payload').item.json.userSentiment }}\\n\\nCRM Note: {{ $('Parse + Validate Payload').item.json.crmHandoffNote }}\\n\\nCaller: {{ $('Parse + Validate Payload').item.json.callerName }}\\nPhone: {{ $('Parse + Validate Payload').item.json.callerPhone }}\\nState: {{ $('Parse + Validate Payload').item.json.callerState }}\\nProduct Interest: {{ $('Parse + Validate Payload').item.json.productInterest }}\\nUrgency: {{ $('Parse + Validate Payload').item.json.urgency }}\\nOutcome: {{ $('Parse + Validate Payload').item.json.callOutcome }}\\nAppointment Set: {{ $('Parse + Validate Payload').item.json.appointmentSet }}\\n\\n🔴 Recording: {{ $('Parse + Validate Payload').item.json.recordingUrl }}\\nCall ID: {{ $('Parse + Validate Payload').item.json.callId }}\\nDuration: {{ $('Parse + Validate Payload').item.json.callDuration }}ms\"\n}\n",
+        "options": {}
+      },
+      "id": "60687696-c6c7-457e-b217-f40f505fc7e5",
+      "name": "GHL – Attach Recording Note (Qualified)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1424,
+        -80
+      ],
+      "notes": "Posts a note to the GHL contact with full call summary and Twilio recording URL. Closes the compliance loop."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://services.leadconnectorhq.com/contacts/{{ $('GHL – Create Contact (Disqualified)').item.json.contact.id }}/notes/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer YOUR_GHL_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"body\": \"📞 Ava Inbound Call (Disqualified) – {{ $('Parse + Validate Payload').item.json.callStartTime }}\\n\\nCaller: {{ $('Parse + Validate Payload').item.json.callerName }}\\nPhone: {{ $('Parse + Validate Payload').item.json.callerPhone }}\\nState: {{ $('Parse + Validate Payload').item.json.callerState }}\\nProduct Interest: {{ $('Parse + Validate Payload').item.json.productInterest }}\\nOutcome: {{ $('Parse + Validate Payload').item.json.callOutcome }}\\n\\n🔴 Recording: {{ $('Parse + Validate Payload').item.json.recordingUrl }}\\nCall ID: {{ $('Parse + Validate Payload').item.json.callId }}\\nDuration: {{ $('Parse + Validate Payload').item.json.callDuration }}ms\"\n}",
+        "options": {}
+      },
+      "id": "daa6ba1a-ef80-4f6f-8609-bd8449026167",
+      "name": "GHL – Attach Recording Note (Disqualified)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        736,
+        320
+      ],
+      "notes": "Attaches recording to disqualified contact too — required for full compliance audit trail."
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/locations/YOUR_GHL_LOCATION_ID/customFields",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": " Bearer YOUR_GHL_API_KEY"
+            },
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        528,
+        112
+      ],
+      "id": "15eae5d8-ea78-4a87-83e3-809957950405",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/opportunities/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "location_id",
+              "value": "YOUR_GHL_LOCATION_ID"
+            },
+            {
+              "name": "contact_id",
+              "value": "={{ $('GHL – Create Contact (Qualified)').item.json.contact.id }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_GHL_API_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        592,
+        -96
+      ],
+      "id": "14aa96ef-7218-48bd-955c-41d1f36872d0",
+      "name": "GHL – Search Opportunity"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "11d78dc6-2108-4566-92b9-369ebcc75653",
+              "leftValue": "={{ $json.opportunities.length }} ",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        800,
+        -96
+      ],
+      "id": "fc80412a-445c-44da-87a5-b0fdeafbf88c",
+      "name": "If-Opportunity Exists?"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Retell Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 OK",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Parse + Validate Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse + Validate Payload": {
+      "main": [
+        [
+          {
+            "node": "Is Payload Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Payload Valid?": {
+      "main": [
+        [
+          {
+            "node": "Is Caller Qualified?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Invalid Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Caller Qualified?": {
+      "main": [
+        [
+          {
+            "node": "GHL – Create Contact (Qualified)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GHL – Create Contact (Disqualified)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL – Create Contact (Qualified)": {
+      "main": [
+        [
+          {
+            "node": "GHL – Search Opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL – Add to Pipeline (New Lead)": {
+      "main": [
+        [
+          {
+            "node": "GHL – Attach Recording Note (Qualified)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL – Create Contact (Disqualified)": {
+      "main": [
+        [
+          {
+            "node": "GHL – Attach Recording Note (Disqualified)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL – Search Opportunity": {
+      "main": [
+        [
+          {
+            "node": "If-Opportunity Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If-Opportunity Exists?": {
+      "main": [
+        [
+          {
+            "node": "GHL – Add to Pipeline (New Lead)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GHL – Attach Recording Note (Qualified)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "f33c7852-8efc-4d02-a5ae-7862837db4ed",
+  "meta": {
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "id": "vCBm2hOi9FYwVJsv",
+  "tags": []
+}
