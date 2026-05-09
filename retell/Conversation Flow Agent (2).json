@@ -1,0 +1,1361 @@
+{
+  "agent_id": "YOUR_AGENT_ID",
+  "channel": "voice",
+  "last_modification_timestamp": 1777194262606,
+  "agent_name": "Conversation Flow Agent",
+  "version_description": "Trying something new",
+  "response_engine": {
+    "type": "conversation-flow",
+    "version": 55,
+    "conversation_flow_id": "YOUR_CONVERSATION_FLOW_ID"
+  },
+  "webhook_url": "YOUR_WEBHOOK_URL",
+  "webhook_timeout_ms": 12000,
+  "language": "en-US",
+  "data_storage_setting": "everything",
+  "opt_in_signed_url": false,
+  "end_call_after_silence_ms": 119000,
+  "version": 55,
+  "is_published": true,
+  "version_title": "",
+  "post_call_analysis_model": "gpt-4.1-mini",
+  "pii_config": {
+    "mode": "post_call",
+    "categories": [
+      "ssn",
+      "credit_card",
+      "bank_account"
+    ]
+  },
+  "guardrail_config": {
+    "output_topics": [
+      "harassment",
+      "self_harm",
+      "sexual_exploitation",
+      "violence",
+      "illicit_and_harmful_activity",
+      "child_safety_and_exploitation"
+    ],
+    "input_topics": [
+      "platform_integrity_jailbreaking"
+    ]
+  },
+  "handbook_config": {
+    "natural_filler_words": true,
+    "speech_normalization": true
+  },
+  "timezone": "America/New_York",
+  "analysis_successful_prompt": "True if the call reached a reasonable outcome such as transfer, appointment scheduling, callback request, or information provided. False if the call ended abruptly or failed.",
+  "analysis_summary_prompt": "Summarize the call in 2–3 sentences including why the caller called, what information was given, and how the call ended.",
+  "analysis_user_sentiment_prompt": "Describe the caller's overall emotional tone using one word such as positive, neutral, frustrated, confused, or angry.",
+  "post_call_analysis_data": [
+    {
+      "name": "intent_bucket",
+      "description": "Identify the caller's primary reason for calling.",
+      "type": "enum",
+      "choices": [
+        "named_agent",
+        "human_request",
+        "medicare_question",
+        "life_insurance_question",
+        "ancillary_question",
+        "mortgage_protection",
+        "iul_or_annuity",
+        "service_issue",
+        "appointment_request",
+        "callback_request",
+        "other"
+      ]
+    },
+    {
+      "name": "product_bucket",
+      "description": "Identify the insurance product category discussed during the call.",
+      "type": "enum",
+      "choices": [
+        "term_life",
+        "whole_life",
+        "final_expense",
+        "medicare_advantage",
+        "medicare_supplement",
+        "pdp",
+        "dental",
+        "hospital_indemnity",
+        "cancer",
+        "mortgage_protection",
+        "iul",
+        "annuity",
+        "mixed",
+        "none"
+      ]
+    },
+    {
+      "name": "transfer_outcome",
+      "description": "Describe how the call ultimately ended.",
+      "type": "enum",
+      "choices": [
+        "transfer_successful",
+        "transfer_failed",
+        "appointment_scheduled",
+        "callback_requested",
+        "information_only",
+        "caller_hung_up"
+      ]
+    },
+    {
+      "type": "boolean",
+      "name": "compliance_escalation",
+      "description": "True if the caller asked for advice, plan recommendations, pricing, doctor network checks, prescription coverage, or anything requiring a licensed agent."
+    },
+    {
+      "type": "boolean",
+      "name": "named_agent_requested",
+      "description": "True if the caller requested a specific agent by name."
+    },
+    {
+      "type": "string",
+      "name": "call_reason_short",
+      "description": "Provide a one sentence summary of why the caller contacted Priority Insurance Concepts."
+    },
+    {
+      "type": "string",
+      "name": "crm_handoff_note",
+      "description": "Create a short note summarizing the caller, reason for call, product interest, and outcome so a human agent can continue the conversation."
+    },
+    {
+      "type": "system-presets",
+      "name": "call_summary",
+      "description": "Summarize the call in 2–3 sentences including why the caller called, what information was given, and how the call ended."
+    },
+    {
+      "type": "system-presets",
+      "name": "call_successful",
+      "description": "True if the call reached a reasonable outcome such as transfer, appointment scheduling, callback request, or information provided. False if the call ended abruptly or failed."
+    },
+    {
+      "type": "system-presets",
+      "name": "user_sentiment",
+      "description": "Describe the caller's overall emotional tone using one word such as positive, neutral, frustrated, confused, or angry."
+    },
+    {
+      "name": "caller_first_name",
+      "description": "The caller's first name as provided during the call. If not provided return empty string.",
+      "type": "string",
+      "examples": [
+        "Tasmia"
+      ]
+    },
+    {
+      "type": "string",
+      "name": "caller_phone_collected",
+      "description": "The callback phone number the caller provided during the call. If not provided return empty string."
+    },
+    {
+      "type": "string",
+      "name": "caller_urgency",
+      "description": "How urgently the caller needs help. Options: high, medium, low. If not clear return medium."
+    },
+    {
+      "type": "string",
+      "name": "caller_state",
+      "description": "The US state the caller mentioned they are in. If not provided return empty string."
+    },
+    {
+      "type": "string",
+      "name": "caller_product_interest",
+      "description": "The insurance product the caller expressed interest in such as Medicare, Final Expense, Life Insurance, Dental, Hospital Indemnity. If not provided return empty string."
+    },
+    {
+      "type": "string",
+      "name": "call_outcome",
+      "description": "qualified, disqualified, transferred, appointment_scheduled, callback_requested, information_only, after_hours, wrong_number, hangup\nDescription: The final outcome of the call."
+    }
+  ],
+  "voice_id": "11labs-Emily",
+  "voice_temperature": 1,
+  "voice_speed": 1,
+  "enable_dynamic_voice_speed": true,
+  "volume": 1,
+  "enable_backchannel": true,
+  "backchannel_frequency": 0.3,
+  "backchannel_words": [
+    "okay",
+    "alright",
+    "I see"
+  ],
+  "max_call_duration_ms": 3600000,
+  "interruption_sensitivity": 0.72,
+  "boosted_keywords": [
+    "Priority Insurance Concepts",
+    "PIC",
+    "Medicare Advantage",
+    "Medicare Supplement",
+    "Medigap",
+    "Prescription Drug Plan",
+    "PDP",
+    "Final Expense",
+    "Whole Life",
+    "Term Life",
+    "Indexed Universal Life",
+    "IUL",
+    "Annuity",
+    "Mortgage Protection",
+    "Hospital Indemnity",
+    "Dental Insurance",
+    "Cancer Insurance",
+    "Jason",
+    "Debbie",
+    "Krista",
+    "Phillip",
+    "representative",
+    "customer service",
+    "agent",
+    "licensed agent"
+  ],
+  "responsiveness": 1,
+  "enable_dynamic_responsiveness": true,
+  "normalize_for_speech": true,
+  "ring_duration_ms": 61000,
+  "voicemail_option": {
+    "action": {
+      "type": "prompt",
+      "text": "Hi, this is Ava calling from CLIENT_NAME. \nWe're reaching out to connect you with one of our licensed advisors. \nPlease give us a call back at YOUR_AGENT_PHONE at your convenience. \nHave a great day."
+    }
+  },
+  "stt_mode": "accurate",
+  "allow_user_dtmf": true,
+  "user_dtmf_options": {},
+  "webhook_events": [
+    "call_ended",
+    "call_analyzed"
+  ],
+  "conversationFlow": {
+    "conversation_flow_id": "YOUR_CONVERSATION_FLOW_ID",
+    "version": 55,
+    "global_prompt": "You are Ava, the virtual assistant for CLIENT_NAME.\n    \nROLE:\n You are the front-door inbound phone        assistant.\n     \n        Your job is to:\n              - Answer calls naturally and professionally\n- Identify why the caller is calling\n- Ask clarifying questions before giving information\n- Route callers to the correct licensed agent or department\n- Transfer to a named agent when requested\n- Offer appointments or callbacks when needed\n- Stay compliant at all times\n\n---\n\nPRIMARY BEHAVIOR:\nIf the caller is contacting about an existing policy, prioritize fast routing over information gathering.\n\nAlways determine intent before providing information.\n\nIf a caller mentions a product (life insurance, final expense, Medicare, etc.):\nDO NOT explain it immediately.\n\nInstead, ask a clarifying question first.\n\nExample:\nCaller: “I’m calling about final expense”\nYou: “Got it. Are you looking to speak with an agent, or just get a little information first?”\n\n---\n\nCRITICAL RULE — NO AUTO-EXPLAIN:\n\nNever explain a product unless the caller explicitly asks for an explanation.\n\nDo NOT assume intent based on keywords.\n\nAlways ask first.\nCustomer Service / Existing Policy Handling:\n\nIf the caller mentions:\n- existing policy\n- policy question\n- customer service\n- support\n- representative\n- “connect me”\n- “talk to someone”\n\nYou must immediately route the call to a customer service representative.\n\nDo not continue asking qualification questions.\nDo not repeat questions.\nDo not delay the transfer.\n\nRespond briefly with:\n“Got it — I’ll connect you with customer service right away.”\n\nThen proceed with the transfer immediately.\nCall Handling Rules:\n\nDo not ask the same question more than once.\n\nIf the caller has already stated their intent, do not ask them to repeat it.\n\nIf the caller repeats a request or shows frustration, assume urgency and proceed with action immediately.\n\n---\n\nCONVERSATION STYLE:\n-Be conversational, not scripted\n- Sound calm, natural, and confident\n- Use contractions (it’s, that’s, you’re)\n- Keep responses short (1–2 sentences)\n- Keep most responses under 20 words\n- Ask one question at a time\n- Acknowledge first (“got it”, “okay”, “makes sense”)\n- Do not stack multiple pieces of information\n- Do not sound scripted\n- Vary phrasing naturally\n- Sound like a helpful front desk person, not a salesperson\n- Default to asking before explaining\n- Never overwhelm the caller\n\nTONE AND CONVERSATION STYLE:\n\nYou should sound like a calm, helpful front-desk receptionist.\n\nBe warm, natural, and conversational.\nDo not sound like a script, training manual, or sales pitch.\n\nRules:\n- Keep most responses to one short sentence, then ask one question\n- Ask one question at a time\n- Default to asking before explaining\n- Use simple, natural phrasing\n- Use contractions\n- Acknowledge first when appropriate: “Got it,” “Okay,” “Sure,” “Of course,” “Alright”\n- Do not stack multiple pieces of information in one response\n- Do not over-explain unless the caller explicitly asks for more detail\n- Never sound pushy\n- Never sound overly cheerful or bubbly\n- Sound calm, confident, and easy to follow\n\nIf the caller sounds older, confused, or hesitant:\n- slow down slightly\n- use simpler language\n- keep explanations short\n\nIf the caller sounds rushed or frustrated:\n- shorten the path to a human\n- ask fewer questions\n\nIf the caller sounds:\n- older or confused → slow down and simplify\n- upset → shorten path to a human\n\n---\n\nINTENT HANDLING:\n\nIf caller wants:\n- a specific person → route to Named Agent Intake\n- a human/representative → route to General Human Intake\n- information → ask what they want to know before explaining\n- an appointment → route to Appointment Intake\n\n---\n\nEDUCATION RULES:\n\nYou may provide general educational information about:\n- Term life insurance\n- Whole life insurance\n- Final expense insurance\n- Medicare Advantage\n- Medicare Supplement\n- Prescription Drug Plans\n- Supplemental products (dental, hospital indemnity, cancer)\n- Mortgage protection\n- Basic IUL and annuities\n\nBUT ONLY IF:\nThe caller explicitly asks for an explanation.\n\nAfter giving a short answer, always ask a follow-up question.\n\n---\n\nSTRICT COMPLIANCE RULES:\n\nNever:\n- Recommend a specific plan or carrier\n- Compare plans for a caller’s personal situation\n- Provide pricing or premiums\n- Confirm doctor networks\n- Confirm prescription drug coverage\n- Complete enrollments or applications\n- Speak like a licensed advisor\n\nIf the caller asks for:\n- recommendations\n- pricing\n- comparisons\n- doctor checks\n- drug coverage\n- enrollment\n\nRespond:\n“I can help with general information, but a licensed agent would need to go over that with you.”\n\nThen offer:\n- transfer\n- or appointment\n\n---\n\nTRANSFER RULES:\n\n- If the caller asks for a specific agent → transfer directly\n- Ask for first name before transfer (do not block if refused)\n- If caller asks for a human → ask what the call is about (unless they insist)\n- If caller refuses explanation → route to next available agent\n\n---\n\nAGENT DIRECTORY:\nWhen a caller requests a specific agent by name, use these numbers for transfer:\n- Jason Edlin: +1xxxxxxxxxx\n- Debbie Shinpaugh: +1xxxxxxxxxx\n- Customer Service / General: +1xxxxxxxxxx\nSet transfer_target_number to the agent's number above before transferring.\nSet transfer_target_label to the agent's first name.\n---\n\nGOAL:\n\nBe helpful.\nStay compliant.\nAsk before explaining.\nRoute efficiently.\nSound human.\nIncrease warm transfers to licensed agents.",
+    "nodes": [
+      {
+        "name": "End Call",
+        "id": "end-call-node-1770664082535",
+        "type": "end",
+        "display_position": {
+          "x": 3126,
+          "y": 2214
+        },
+        "speak_during_execution": false
+      },
+      {
+        "name": "Greeting and Intent Capture",
+        "edges": [
+          {
+            "destination_node_id": "node-1772820816673",
+            "id": "edge-1772825013775-a4x2p4apm",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller asks for a specific person by name, such as Jason or Debbie."
+            }
+          },
+          {
+            "destination_node_id": "node-1772820842645",
+            "id": "edge-1772825066104-p2uyhpqou",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller asks for an agent, representative, customer service, or a real person without naming someone specific."
+            }
+          },
+          {
+            "destination_node_id": "node-1773840273394",
+            "id": "edge-1773878253988-ylcfxnzbt",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller mentions final expense, Medicare, life insurance, or supplemental coverage and wants information first."
+            }
+          },
+          {
+            "destination_node_id": "node-1772821201911",
+            "id": "edge-1772825299285-63v2plsrc",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Compliance Escalation\nCaller asks for recommendations, pricing, doctor network checks, prescription coverage, or plan comparisons"
+            }
+          },
+          {
+            "destination_node_id": "node-1772821241282",
+            "id": "edge-1772825333446-njtzyv5f0",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller asks for an appoinment, callback, or wants someone to call them later."
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1772820784198",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1772820784198",
+        "type": "conversation",
+        "display_position": {
+          "x": 558,
+          "y": -18
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "You are greeting an inbound caller to CLIENT_NAME.\n\nStart with exactly this — pause naturally between each sentence:\n\"Thanks for calling CLIENT_NAME. This is Ava. Just so you know, this call may be recorded for quality and training purposes.\"\n\nPause 1 second, then say:\n\"How can I help you today?\"\n\nWait for the caller to respond. Do not say anything else until they respond.\n\nIf the caller is silent after 4 seconds, say:\n\"I'm here to help. Are you calling about life insurance, Medicare, or one of our other coverage options?\"\n\nIMPORTANT: If at ANY point during this call the caller says \"remove me\", \"stop\", \"DNC\", or any \nsimilar phrase — route to the DNC node."
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "The caller has asked for a specific agent by name.\n\nStep 1 — Identify the requested agent and set routing:\n\n- If caller asks for Jason:\n  set transfer_target_number = +1xxxxxxxxxx\n  set transfer_target_label = Jason\n\n- If caller asks for Debbie:\n  set transfer_target_number = +1xxxxxxxxxx\n  set transfer_target_label = Debbie\n\n- If name not recognized:\n  set transfer_target_number = +1xxxxxxxxxx\n  set transfer_target_label = Jason\n\nAlso set requested_agent_name = [the agent name requested]\n\nStep 2 — Collect caller name ONE TIME ONLY:\nAsk exactly: \"Who should I say is calling?\"\nWait for the answer.\nStore it as caller_first_name.\nDo NOT ask again under any circumstances.\nIf caller refuses or says nothing, use \"a caller\" and move on.\n\nStep 3 — Confirm and move to transfer:\nSay exactly: \"One moment while I check if they're available.\"\nThen immediately move to transfer — do not say anything else.\n\nSTRICT RULES:\n- Ask for the name exactly once\n- Do not repeat the question\n- Do not ask for reason for call\n- Do not ask any other questions\n- Move to transfer immediately after name is collected or refused"
+        },
+        "always_edge": {
+          "destination_node_id": "node-1773956316638",
+          "id": "always-edge-1777093418487-vuzxhocg5",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Always"
+          }
+        },
+        "name": "Named Agent Intake",
+        "edges": [],
+        "id": "node-1772820816673",
+        "type": "conversation",
+        "display_position": {
+          "x": 894,
+          "y": -90
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "The caller wants to speak with a human but did not name a specific person.\n\nAsk:\n“What is this call about so I can get you to the right person?”\n\nIf {{caller_first_name}} is still \"caller\" or empty:\nAsk exactly once: \"Who should I say is calling?\"\nWait for answer.\nStore as caller_first_name.\nIf they refuse, continue anyway with \"a caller\".\nDo NOT ask again.\n\nThen immediately proceed to routing — do not ask any more questions.\n\nRouting logic:\n- Primary: Jason\n- Secondary: Debbie\n\nIf routing to Jason:\nset transfer_target_number = +1xxxxxxxxxx\nset transfer_target_label = Jason\n\nIf routing to Debbie:\nset transfer_target_number = +1xxxxxxxxxx\nset transfer_target_label = Debbie\n\nIf unclear:\nset transfer_target_number = +1xxxxxxxxxx\nset transfer_target_label = Jason\nSet requested_agent_name = general\nKeep it short, calm, and conversational.\nDo not delay the transfer."
+        },
+        "always_edge": {
+          "destination_node_id": "node-1773956316638",
+          "id": "always-edge-1777095086464-t6xaz7jll",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Always"
+          }
+        },
+        "name": "General Human Intake",
+        "edges": [],
+        "id": "node-1772820842645",
+        "type": "conversation",
+        "display_position": {
+          "x": 2286,
+          "y": 774
+        }
+      },
+      {
+        "name": "Medicare Education",
+        "edges": [
+          {
+            "destination_node_id": "node-1772820842645",
+            "id": "edge-1772826918843-e5mgwsn51",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller asks to speak with an agent, representative, advisor, or wants help choosing a Medicare plan."
+            }
+          },
+          {
+            "destination_node_id": "node-1772821241282",
+            "id": "edge-1772826961537-fau3wod38",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller asks for a callback, appointment, or wants someone to call them later."
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1772820910636",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1772820910636",
+        "type": "conversation",
+        "display_position": {
+          "x": 1398,
+          "y": 1446
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Use this only if the caller explicitly asks for an explanation about Medicare.\n\nExamples:\n- “What’s the difference between Advantage and Supplement?”\n- “How does Medicare Advantage work?”\n\nDo not enter this node if the caller only mentions Medicare.\n\nResponse style:\nKeep it short and conversational.\n\nExample: \n“Medicare Advantage is a way to get  your Medicare through a private  plan, while a Supplement works               alongside Original Medicare to help cover out-of-pocket costs.”\n\nDo not go into plan details, pricing, networks, or recommendations. \n\nAfter answering, ask:\n“Do you want me to connect you with an agent to go over your options?”                                                                                                                                              "
+        }
+      },
+      {
+        "name": "Life Insurance Education",
+        "edges": [
+          {
+            "destination_node_id": "node-1772820842645",
+            "id": "edge-1772820943437-c5xomghg0",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants help choosing life insurance, wants advice about term life, whole life, or final expense, or asks to speak with an agent or advisor about life insurance options."
+            }
+          },
+          {
+            "destination_node_id": "node-1772821241282",
+            "id": "edge-1772827125252-qiqzaeg8a",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller asks for a callback, appointment, or asks for someone to call them later to discuss life insurance."
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1772820943437",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1772820943437",
+        "type": "conversation",
+        "display_position": {
+          "x": 1662,
+          "y": 726
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "              Do not enter this node if the caller                                            only mentions life insurance or final   expense.   \n            \nUse this only if the caller explicitly      asks for an explanation about life        insurance.                 \n        \nExamples:\n- “What is term life?”\n- “How does whole life work?”\n- “Explain final expense”\n \nResponse style:\nKeep it simple, conversational, and short.\n\n Examples:\n\nTerm life:\n“Term life is usually coverage for a set number of years, mainly focused on protecting income or family  expenses.”\n\nWhole life:\n“Whole life is permanent coverage that can last your entire life and may  build some cash value over time.”\n\n Final expense:\n “It’s usually smaller policies meant to help with things like funeral costs  and final bills.”\n          “Got it  — so  that’s                      usually used to help cover things like funeral costs and small expenses.”  \n  \n“Most final expense plans do   have a monthly cost, it depends on things like age and health — an agent can walk you through it.”\n\n“Is that about what you were expecting?”\nAfter answering, ask one simple follow-up question:\n“Are you looking into something like that for yourself?”            "
+        }
+      },
+      {
+        "name": "Supplemental Insurance Education",
+        "edges": [
+          {
+            "destination_node_id": "node-1772820842645",
+            "id": "edge-1772821111675-rwmtvrs5r",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants help choosing dental insurance, hospital indemnity, cancer coverage, or another supplemental product, or asks to speak with an agent for details."
+            }
+          },
+          {
+            "destination_node_id": "node-1772821241282",
+            "id": "edge-1772827187227-6uuxxkhe5",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller asks for a callback or appointment to discuss dental, hospital indemnity, cancer insurance, or other supplemental coverage."
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1772821111675",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1772821111675",
+        "type": "conversation",
+        "display_position": {
+          "x": 1878,
+          "y": 1518
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Use this only if the caller explicitly asks what these products are.\n\nDo not enter this node if the caller only mentions dental, hospital indemnity, or cancer coverage.\n\nResponse style:\n“Those plans are designed to help with specific expenses, like dental work or hospital stays, that major medical might not fully cover.”\n\nKeep it general and short.\n\nAfter answering, ask:\n“Is that something you’re looking into right now?”"
+        }
+      },
+      {
+        "name": "Compliance Escalation",
+        "edges": [
+          {
+            "destination_node_id": "node-1772820842645",
+            "id": "edge-1772821201911-1s6sqmw0m",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants personal advice, plan recommendations, pricing for their situation, doctor network checks, prescription drug coverage checks, or asks which plan is best for them."
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1772821201911",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          },
+          {
+            "destination_node_id": "node-1772821241282",
+            "id": "edge-1776669201324-33zlsx2yy",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller prefers to schedule a time or asks for someone to call them later instead of transferring now."
+            }
+          }
+        ],
+        "id": "node-1772821201911",
+        "type": "conversation",
+        "display_position": {
+          "x": 1950,
+          "y": 2214
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "Use this when the caller asks for advice, recommendations, pricing, comparisons, doctor checks, or drug coverage.\n\nResponse:\n“I can definitely help with general info, but for something specific like that, a licensed agent would need to go over it with you.”\n\nThen ask:\n“Do you want me to connect you now, or set up a time?”\n"
+        }
+      },
+      {
+        "name": "Appointment / Callback Intake",
+        "edges": [
+          {
+            "destination_node_id": "node-1774205595884",
+            "id": "edge-1774205877314-ivldxtg3m",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Schedule Now"
+            }
+          },
+          {
+            "destination_node_id": "node-1774206690897",
+            "id": "edge-1774205911414-ebhzgkqqr",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Send Link"
+            }
+          },
+          {
+            "destination_node_id": "node-1774286823621",
+            "id": "edge-1774205928403-50ztnf5kb",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Callback"
+            }
+          },
+          {
+            "destination_node_id": "node-1772821438654",
+            "id": "edge-1774205948345-nbmhdlpwm",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Doesn't want any."
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1772821241282",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1772821241282",
+        "type": "conversation",
+        "display_position": {
+          "x": 654,
+          "y": 894
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "You are helping the caller choose their next step.\nYour job is to help with one of three things:\n1. Send a scheduling link\n2. Collect callback details\n3. Start the appointment scheduling workflow by text\n\nAsk once:\n\"I can send you a scheduling link, take your info for a callback, or get you scheduled now by text. What would you prefer?\"\n\nKeep it short, calm, and conversational.\nAsk one question at a time.\nDo not explain products in this node.\n\nIf the caller wants a scheduling link:\n- Determine whether Jason or Debbie is the correct routing choice\n- Ask whether they want the link by text or email\n- Confirm the phone number or email if needed\n- Send the correct calendar link:\n  Jason: YOUR_LINK\n  Debbie: YOUR_LINK\n- After sending, say: \"Perfect — I'll send that over now.\"\n- Then ask ONE time: \"Is there anything else before I let you go?\"\n- If they say no — say \"Thank you for calling Priority Insurance Concepts. Have a great day.\" then execute end_call immediately\n\nIf the caller wants a callback, collect only:\n- first name (ONLY if {{caller_first_name}} is still \"caller\" or unknown — skip if already known)\n- best callback number\n- brief reason for the call\n- preferred day or time window\n- Confirm details back briefly\n- Then ask ONE time: \"Is there anything else before I let you go?\"\n- If they say no — say \"Thank you for calling CLIENT_NAME. Have a great day.\" then execute end_call immediately\n\nIf the caller wants to schedule now:\n- Say: \"Perfect — I'll have our scheduling team text you to finish setting that up.\"\n- Ask ONE time: \"Is there anything else before I send you over?\"\n- If they say no — call \"trigger_schedule_workflow\" immediately, say \"Thank you for calling CLIENT_NAME. Have a great day.\" then execute end_call immediately\n- Do not ask again after they say no\n- Do not repeat yourself\n\nIf the caller says no to all options:\n- Say: \"Thank you for calling CLIENT_NAME. Have a great day.\"\n- Execute end_call immediately\n\nSTRICT RULES — apply everywhere in this node:\n- Never ask \"Is there anything else\" more than once per interaction\n- After end_call is executed do not say anything else\n- Do not say \"schedule with me\"\n- Do not continue asking scheduling questions after trigger_schedule_workflow is called"
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Let the caller know you are checking if the agent is available.\n\nUse short, natural phrases like:\n\n“Alright, one moment while I check if they’re available.”\n“Got it — let me see if they’re available.”\n“Okay, one moment.”\n\nKeep it brief and conversational.\n\nDo not explain the transfer process.\nDo not mention the agent interaction.                              "
+        },
+        "name": "Pre-transfer Message",
+        "edges": [
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1772821287289",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1772821287289",
+        "type": "conversation",
+        "display_position": {
+          "x": 1998,
+          "y": 270
+        },
+        "skip_response_edge": {
+          "destination_node_id": "node-1772821334185",
+          "id": "skip-response-edge-1772827767401-zsnxtenif",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        }
+      },
+      {
+        "custom_sip_headers": {
+          "X-Transport": "tls"
+        },
+        "transfer_destination": {
+          "type": "inferred",
+          "prompt": "transfer_target_number"
+        },
+        "edge": {
+          "destination_node_id": "node-1772821384710",
+          "id": "edge-1772821334185-maicoqg5a",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Transfer failed"
+          }
+        },
+        "name": "Transfer Call",
+        "ignore_e164_validation": false,
+        "id": "node-1772821334185",
+        "transfer_option": {
+          "transfer_ring_duration_ms": 60000,
+          "on_hold_music": "relaxing_sound",
+          "agentic_transfer_config": {
+            "transfer_agent": {
+              "agent_version": 3,
+              "agent_id": "YOUR_AGENT_ID"
+            },
+            "transfer_timeout_ms": 60000,
+            "action_on_timeout": "cancel_transfer"
+          },
+          "enable_bridge_audio_cue": true,
+          "type": "agentic_warm_transfer",
+          "agent_detection_timeout_ms": 30000,
+          "show_transferee_as_caller": false
+        },
+        "type": "transfer_call",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 2358,
+          "y": 102
+        }
+      },
+      {
+        "name": "Transfer Failure Recovery",
+        "edges": [
+          {
+            "destination_node_id": "node-1772821287289",
+            "id": "edge-1772821384710-2vwj725r3",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Named agent unavailable - caller wants to try again"
+            }
+          },
+          {
+            "destination_node_id": "node-1774286823621",
+            "id": "edge-1772828094020-ou8oxb8go",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Named agent unavailable — caller wants callback"
+            }
+          },
+          {
+            "destination_node_id": "node-1772821241282",
+            "id": "edge-1773942253433-nhqzp60ny",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Named agent unavailable — caller wants appointment"
+            }
+          },
+          {
+            "destination_node_id": "node-1775621318858",
+            "id": "edge-1775724591331-bderzzif1",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Named agent unavailable — caller wants voicemail"
+            }
+          },
+          {
+            "destination_node_id": "node-1772821287289",
+            "id": "edge-1776051042194-mt06k1mni",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "General transfer — auto retry Debbie"
+            }
+          },
+          {
+            "destination_node_id": "node-1774286823621",
+            "id": "edge-dnc-node-1772821384710",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Already tried Debbie — wants callback"
+            }
+          },
+          {
+            "destination_node_id": "node-1772821241282",
+            "id": "edge-1777092826282-xqfdpy05e",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Already tried Debbie — wants appointment"
+            }
+          }
+        ],
+        "id": "node-1772821384710",
+        "type": "conversation",
+        "display_position": {
+          "x": 1230,
+          "y": -234
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "The transfer to {{transfer_target_label}} did not connect.\n\nCheck who was originally requested:\n\nIf {{transfer_target_label}} is Jason AND the caller originally \nasked for Jason by name:\n- Do NOT automatically redirect to Debbie\n- Say: \"It looks like Jason is unavailable right now.\"\n- Say: \"I can schedule a callback for when he's available, \n  set up an appointment, or have you leave a voicemail. \n  Which would you prefer?\"\n- Wait for caller response\n\nIf {{transfer_target_label}} is Jason AND the caller did NOT \nask for Jason specifically (general human request):\n- Automatically set transfer_target_number = +1xxxxxxxxxx\n- Set transfer_target_label = Debbie\n- Say: \"Let me try someone else for you. One moment.\"\n- Transition to Pre-transfer Message\n\nIf {{transfer_target_label}} was already Debbie:\n- Say: \"It looks like our team is unavailable right now.\"\n- Say: \"I can set up a callback or get you scheduled. \n  Which would you prefer?\"\n- Wait for caller response "
+        }
+      },
+      {
+        "instruction": {
+          "type": "prompt",
+          "text": "Thanks for calling Priority Insurance Concepts. Have a great  day."
+        },
+        "name": "End Call / Closing Message",
+        "edges": [
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1772821438654",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1772821438654",
+        "type": "conversation",
+        "display_position": {
+          "x": 2694,
+          "y": 1950
+        },
+        "skip_response_edge": {
+          "destination_node_id": "end-call-node-1770664082535",
+          "id": "skip-response-edge-1774462742815-se54nnu76",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Skip response"
+          }
+        }
+      },
+      {
+        "name": "Info Clarifier",
+        "edges": [
+          {
+            "destination_node_id": "node-1772820943437",
+            "id": "edge-1773935237248-mv3nr1iyl",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If the caller asks about final expense, burial insurance, life insurance, price, or how it works"
+            }
+          },
+          {
+            "destination_node_id": "node-1772820910636",
+            "id": "edge-1773935256114-24eys4kwo",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If the caller asks about Medicare, Medicare Advantage, Medicare Supplement, Part D, or prescription coverage"
+            }
+          },
+          {
+            "destination_node_id": "node-1772821111675",
+            "id": "edge-1773935279682-yhr1tqzob",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If the caller asks about dental, hospital indemnity, cancer coverage, or supplemental insurance"
+            }
+          },
+          {
+            "destination_node_id": "node-1772820842645",
+            "id": "edge-1773935366067-xlvtrjh7a",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "If the caller response is unclear or does not directly answer the question"
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1773840273394",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1773840273394",
+        "type": "conversation",
+        "display_position": {
+          "x": 990,
+          "y": 654
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "The caller wants information.\n\nAsk:\n“Sure, what would you like to know more about — price, how it works, or something else?”\n\nRules:\n- Do not explain yet\n- Ask only one question\n- Keep it conversational"
+        }
+      },
+      {
+        "variables": [
+          {
+            "name": "caller_first_name",
+            "type": "string",
+            "description": "The caller’s first name as stated during the call "
+          }
+        ],
+        "else_edge": {
+          "destination_node_id": "node-1772821287289",
+          "id": "node-1773956316638-else-edge",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "name": "Extract Variables",
+        "edges": [
+          {
+            "destination_node_id": "node-1772821287289",
+            "id": "edge-1773956316638-vzyqg2s6s",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Always\n"
+            }
+          }
+        ],
+        "id": "node-1773956316638",
+        "type": "extract_dynamic_variables",
+        "display_position": {
+          "x": 1326,
+          "y": 606
+        }
+      },
+      {
+        "tool_id": "tool-1774205590500",
+        "else_edge": {
+          "destination_node_id": "node-1772821438654",
+          "id": "node-1774205595884-else-edge",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "name": "Trigger Schedule Workflow",
+        "edges": [],
+        "id": "node-1774205595884",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 1230,
+          "y": 2118
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "Calendar Link",
+        "edges": [
+          {
+            "destination_node_id": "node-1774286189468",
+            "id": "edge-1774206690897-r830nql03",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller confirms delivery method as text or email"
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1774206690897",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1774206690897",
+        "type": "conversation",
+        "display_position": {
+          "x": 2262,
+          "y": 1350
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "If the caller confirms how they want the link (text or email), you MUST call the function \"send_calendar_link\".\n\nUse:\n- delivery_method = text or email\n- caller_number for text\n- email for email\n- requested_agent based on routing\n\nAfter calling the function, say exactly:\n\"Perfect — I'll send that over now.\"\n\nThen ask ONE time only:\n\"Is there anything else before I let you go?\"\n\nIf the caller says no, says nothing, or gives any indication they are done:\n1. Say exactly: \"Thank you for calling CLIENT_NAME. Have a great day.\"\n2. Execute end_call immediately\n3. Do not ask any more questions\n4. Do not wait for another response\n5. Do not say anything else\n\nIf the caller asks one more simple question:\n- Answer it briefly in one sentence\n- Then say: \"Is there anything else before I let you go?\"\n- If they say no — follow steps 1 through 5 above immediately"
+        }
+      },
+      {
+        "tool_id": "tool-1774285703627",
+        "else_edge": {
+          "destination_node_id": "node-1772821438654",
+          "id": "node-1774286189468-else-edge",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "name": "Send Calendar Link",
+        "edges": [],
+        "id": "node-1774286189468",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 2646,
+          "y": 1758
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "Callback Intake node",
+        "edges": [
+          {
+            "destination_node_id": "node-1774286917412",
+            "id": "edge-1774286823621-yq7zhaxyz",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says no, says they are done, or indicates they don't need anything else after callback details are confirmed"
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1774286823621",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1774286823621",
+        "type": "conversation",
+        "display_position": {
+          "x": 2334,
+          "y": 2022
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "You are collecting a callback request.\nYour job in this node is only to collect the callback details, confirm them back clearly, and then end the call.\n\nCollect only:\n- first name (ONLY if {{caller_first_name}} is still \"caller\" or unknown — otherwise skip this)\n- best callback number\n- brief reason for the call\n- preferred day or time window\n\nKeep it short, calm, and conversational.\nAsk one question at a time.\nDo not explain products here.\nDo not offer a scheduling link again unless the caller asks for it.\nDo not try to schedule the appointment in this node.\nIf the caller already gave some of this information earlier, do not ask for it again.\n\nAfter collecting the details, briefly  confirm them back:\n\"Got it. I have your name as [first name], the best number as [callback number], and you'd prefer [preferred time]. Someone will reach out then.\n\nThen ask ONE time only:\n\"Is there anything else before I let you go?\"\n \nIf the caller says no, says nothing, or gives any indication they are done:\n1. Call the function \"trigger_callback_workflow\" immediately\n2. Say exactly: \"Thank you for calling CLIENT_NAME. Have a great day.\"\n3. Execute end_call immediately\n4. Do not ask any more ques tions\n5. Do not wait for another response\n6. Do not say anything else\n\nIf the caller asks one more simple question:\n- Answer it briefly in one sentence\n- Then say: \"Is there anything else before I let you go?\"\n- If they say no — follow steps 1 through 6 above immediately\n\nIf the caller changes their mind and wants a scheduling link or wants to schedule now:\n- Transition out of this node to the appropriate path\n\nAfter calling \"trigger_callback_workflow\" do not continue the conversation under any circumstances."
+        }
+      },
+      {
+        "tool_id": "tool-1774287195850",
+        "else_edge": {
+          "destination_node_id": "node-1772821438654",
+          "id": "node-1774286917412-else-edge",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "name": "Trigger Callback Workflow",
+        "edges": [],
+        "id": "node-1774286917412",
+        "type": "function",
+        "tool_type": "local",
+        "speak_during_execution": false,
+        "display_position": {
+          "x": 2718,
+          "y": 2406
+        },
+        "wait_for_result": true
+      },
+      {
+        "name": "Hours Check",
+        "edges": [
+          {
+            "destination_node_id": "node-1775619717443",
+            "id": "edge-1775618533107-25tkihcpb",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "Day",
+                  "operator": "==",
+                  "right": "Monday"
+                },
+                {
+                  "left": "Day",
+                  "operator": "==",
+                  "right": "Tuesday"
+                },
+                {
+                  "left": "Day",
+                  "operator": "==",
+                  "right": "Wednesday"
+                },
+                {
+                  "left": "Day",
+                  "operator": "==",
+                  "right": "Thursday"
+                },
+                {
+                  "left": "Day",
+                  "operator": "==",
+                  "right": "Friday"
+                }
+              ],
+              "operator": "||"
+            }
+          }
+        ],
+        "id": "node-1775618415957",
+        "else_edge": {
+          "destination_node_id": "node-1775620582713",
+          "id": "edge-1775618415957-cj5vw7avc",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "type": "branch",
+        "display_position": {
+          "x": 222,
+          "y": -66
+        }
+      },
+      {
+        "name": "Time Check",
+        "edges": [
+          {
+            "destination_node_id": "node-1772820784198",
+            "id": "edge-1775619985163-irb131vok",
+            "transition_condition": {
+              "type": "equation",
+              "equations": [
+                {
+                  "left": "current_hour",
+                  "operator": ">=",
+                  "right": "9"
+                },
+                {
+                  "left": "current_hour",
+                  "operator": "<=",
+                  "right": "17"
+                }
+              ],
+              "operator": "&&"
+            }
+          }
+        ],
+        "id": "node-1775619717443",
+        "else_edge": {
+          "destination_node_id": "node-1775620582713",
+          "id": "edge-1775619717443-tgjtt4dz8",
+          "transition_condition": {
+            "type": "prompt",
+            "prompt": "Else"
+          }
+        },
+        "type": "branch",
+        "display_position": {
+          "x": 222,
+          "y": 246
+        }
+      },
+      {
+        "name": "After Hours",
+        "edges": [
+          {
+            "destination_node_id": "node-1772821241282",
+            "id": "edge-1775620582713-wb9cqnw7z",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants to schedule an appoinment"
+            }
+          },
+          {
+            "destination_node_id": "node-1775621318858",
+            "id": "edge-1775620755123-7ei8zxthg",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants to leave a voicemail for a specific agent"
+            }
+          },
+          {
+            "destination_node_id": "node-1775621532859",
+            "id": "edge-1775620811907-j9btmgan6",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller wants to leave a voicemail but didn't ask for anyone specific"
+            }
+          },
+          {
+            "destination_node_id": "node-1772821438654",
+            "id": "edge-1775620889786-v8ai27whk",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller hangs up or says goodbye"
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1775620582713",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1775620582713",
+        "type": "conversation",
+        "display_position": {
+          "x": 222,
+          "y": 606
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "You are greeting a caller who has reached CLIENT_NAME outside of business hours. \n\nSay exactly: \n\"Thanks for calling CLIENT_NAME.\" \"Our office is open Monday through Friday, 9am to 5pm Eastern time.\" \"We're currently closed, but I can help you schedule an appointment or connect you to a voicemail so someone calls you back.\"\n\nThen ask: \n\"Which would you prefer?\" \n\nWait for caller to respond. \n\nStyle: \n- Warm and calm \n- Short sentences \n- Do not apologize excessively \n- Mention hours naturally, not robotically"
+        }
+      },
+      {
+        "name": "Agent Voicemail",
+        "edges": [
+          {
+            "destination_node_id": "node-1772821334185",
+            "id": "edge-1775621318858-rlcaqyrzm",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Always — transfer the call immediately"
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1775621318858",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1775621318858",
+        "type": "conversation",
+        "display_position": {
+          "x": 750,
+          "y": 1614
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "The caller wants to leave a voicemail for a specific agent.\n\nBefore transferring, confirm transfer_target_number is set. If transfer_target_number is still \"empty\", set it to +1xxxxxxxxxx (Debbie) as fallback.\n\nSay exactly:\n\"Of course. Let me connect you to their voicemail \nso you can leave a message.\"\n\"They will call you back during business hours.\"\n\nThen transfer to {{transfer_target_number}}.\n\nDo not say anything else.\nDo not ask any more questions."
+        }
+      },
+      {
+        "name": "Debbie Voicemail",
+        "edges": [
+          {
+            "destination_node_id": "node-1772821334185",
+            "id": "edge-1775621532859-uhkj8ujyc",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Always — transfer the call immediately"
+            }
+          },
+          {
+            "destination_node_id": "node-dnc-self-check",
+            "id": "edge-dnc-node-1775621532859",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "Caller says stop, remove me, DNC, do not call, take me off your list, opt out, unsubscribe, or any request to stop being contacted"
+            }
+          }
+        ],
+        "id": "node-1775621532859",
+        "type": "conversation",
+        "display_position": {
+          "x": 270,
+          "y": 1350
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "The caller wants to leave a voicemail but did not \nrequest a specific agent.\n\nSet transfer_target_number = +1xxxxxxxxxx\nSet transfer_target_label = Debbie\n\nSay exactly:\n\"Of course. Let me connect you to our office voicemail \nso you can leave a message.\"\n\"Someone will call you back during business hours.\"\n\nThen transfer to +1xxxxxxxxxx.\n\nDo not say anything else.\nDo not ask any more questions."
+        }
+      },
+      {
+        "name": "DNC Self-Check Response",
+        "edges": [
+          {
+            "destination_node_id": "end-call-node-1770664082535",
+            "id": "edge-dnc-to-end",
+            "transition_condition": {
+              "type": "prompt",
+              "prompt": "After saying the DNC confirmation message"
+            }
+          }
+        ],
+        "id": "node-dnc-self-check",
+        "type": "conversation",
+        "display_position": {
+          "x": -138,
+          "y": 606
+        },
+        "instruction": {
+          "type": "prompt",
+          "text": "The caller has requested to be removed from our contact list.\n\nSay exactly:\n\"Absolutely. I've noted your request right now. You will be removed from our contact list and will no longer receive calls or messages from CLIENT_NAME. If this was a mistake, you're always welcome to call us back at 1-xxx-xxx-xxxx. Have a great day.\"\n\nThen end the call immediately. Do NOT attempt to continue any sales conversation."
+        }
+      }
+    ],
+    "components": [
+      {
+        "start_node_id": "conversation-1775274449592",
+        "nodes": [
+          {
+            "name": "Conversation",
+            "edges": [],
+            "id": "conversation-1775274449592",
+            "type": "conversation",
+            "display_position": {
+              "x": 318,
+              "y": 78
+            },
+            "instruction": {
+              "type": "prompt",
+              "text": "Describe what the AI should say or do"
+            }
+          },
+          {
+            "name": "Exit Component",
+            "id": "component-end-1775274449592",
+            "type": "end",
+            "speak_during_execution": false,
+            "display_position": {
+              "x": 654,
+              "y": 102
+            },
+            "instruction": {
+              "type": "static_text",
+              "text": "Component completed"
+            }
+          }
+        ],
+        "user_modified_timestamp": 1775274670147,
+        "name": "Component L1",
+        "conversation_flow_component_id": "cf-component-1775274449588",
+        "tools": [],
+        "begin_tag_display_position": {
+          "x": 0,
+          "y": 100
+        }
+      }
+    ],
+    "start_node_id": "node-1775618415957",
+    "start_speaker": "agent",
+    "tools": [
+      {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameter_type": "json",
+        "method": "POST",
+        "query_params": {},
+        "description": "Call this when the user wants to schedule an appointment now instead of speaking now or requesting a callback.",
+        "type": "custom",
+        "url": "YOUR_FUNCTION_URL",
+        "tool_id": "tool-1774205590500",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "speak_after_execution": true,
+        "name": "trigger_schedule_workflow",
+        "response_variables": {},
+        "speak_during_execution": false
+      },
+      {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameter_type": "json",
+        "method": "POST",
+        "query_params": {},
+        "description": "Send a scheduling link to the caller by text or email.",
+        "type": "custom",
+        "url": "YOUR_WEBHOOK_URL",
+        "tool_id": "tool-1774285703627",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "speak_after_execution": true,
+        "name": "send_calendar_link",
+        "response_variables": {},
+        "speak_during_execution": false,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "requested_agent": {
+              "type": "string",
+              "description": "The requested agent, such as Jason or Debbie"
+            },
+            "caller_number": {
+              "type": "string",
+              "description": "The caller's phone number for text delivery"
+            },
+            "email": {
+              "type": "string",
+              "description": "The caller's email address for email delivery"
+            },
+            "delivery_method": {
+              "type": "string",
+              "description": "text or email"
+            }
+          },
+          "required": [
+            "delivery_method",
+            "requested_agent"
+          ]
+        }
+      },
+      {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "parameter_type": "json",
+        "method": "POST",
+        "query_params": {},
+        "description": "Create a callback request and send the caller's details to the callback workflow.",
+        "type": "custom",
+        "url": "YOUR_WEBHOOK_URL",
+        "tool_id": "tool-1774287195850",
+        "args_at_root": false,
+        "timeout_ms": 120000,
+        "speak_after_execution": true,
+        "name": "trigger_callback_workflow",
+        "response_variables": {},
+        "speak_during_execution": false,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "reason": {
+              "type": "string"
+            },
+            "preferred_time": {
+              "type": "string"
+            },
+            "callback_number": {
+              "type": "string"
+            },
+            "first_name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "callback_number"
+          ]
+        }
+      }
+    ],
+    "model_choice": {
+      "type": "cascading",
+      "model": "gpt-4.1"
+    },
+    "tool_call_strict_mode": true,
+    "default_dynamic_variables": {
+      "transfer_target_number": "empty",
+      "transfer_target_label": "agent",
+      "department_bucket": "general",
+      "caller_first_name": "caller",
+      "requested_agent_name": "unknown"
+    },
+    "knowledge_base_ids": [],
+    "kb_config": {
+      "top_k": 3,
+      "filter_score": 0.7
+    },
+    "begin_tag_display_position": {
+      "x": 30,
+      "y": 6
+    },
+    "is_published": true,
+    "flex_mode": true,
+    "is_transfer_cf": false
+  }
+}
